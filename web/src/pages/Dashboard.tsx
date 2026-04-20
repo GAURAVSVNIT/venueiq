@@ -28,7 +28,7 @@ export default function Dashboard() {
     North: 3200, South: 4100, East: 1200, West: 2800, Field: 50
   });
   const [queues, setQueues] = useState(INITIAL_QUEUES);
-  const [alerts] = useState([
+  const [alerts] = useState<{ id: string | number; type: string; title: string; msg: string; time: string }[]>([
     { id: 1, type: 'danger', title: 'High Density', msg: 'Zone C occupancy at 94%. Action suggested.', time: 'Just now' },
     { id: 2, type: 'warning', title: 'Queue Spike', msg: 'Main Merch Store wait time > 20 mins.', time: '2 mins ago' }
   ]);
@@ -44,7 +44,7 @@ export default function Dashboard() {
       const docs = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
-      })) as any[];
+      })) as Array<{ id: string | number; type: string; title: string; msg: string; time: string }>;
       setIncidentLog(docs);
     }, (error) => {
       console.warn("Firestore error (check if project is initialized):", error);
@@ -57,7 +57,7 @@ export default function Dashboard() {
         const res = await fetch(`${apiUrl}/analytics/wait-times`);
         const data = await res.json();
         if (data && data.length > 0) {
-          const mappedQueues = data.map((item: any, index: number) => ({
+          const mappedQueues = data.map((item: {stand: string; status: string; wait_time: number; prediction: string}, index: number) => ({
             id: index + 1,
             name: item.stand,
             type: item.status === 'anomaly' ? 'High Load' : 'Normal',
@@ -72,7 +72,7 @@ export default function Dashboard() {
         const healthData = await healthRes.json();
         setAiStatus(healthData.models_loaded || []);
 
-      } catch (err) {
+      } catch {
         console.warn("Backend not yet reachable, using simulation.");
       }
     };
@@ -160,13 +160,13 @@ export default function Dashboard() {
       
       {/* Sidebar */}
       <nav className="sidebar" aria-label="Main Navigation">
-        <div role="button" tabIndex={0} className={`sidebar-icon ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => handleTabChange('dashboard')} onKeyDown={(e) => e.key === 'Enter' && handleTabChange('dashboard')} title="Dashboard" aria-label="Dashboard"><LayoutDashboard /></div>
-        <div role="button" tabIndex={0} className={`sidebar-icon ${activeTab === 'map' ? 'active' : ''}`} onClick={() => handleTabChange('map')} onKeyDown={(e) => e.key === 'Enter' && handleTabChange('map')} title="Map Analytics" aria-label="Map Analytics"><MapIcon /></div>
-        <div role="button" tabIndex={0} className={`sidebar-icon ${activeTab === 'cameras' ? 'active' : ''}`} onClick={() => handleTabChange('cameras')} onKeyDown={(e) => e.key === 'Enter' && handleTabChange('cameras')} title="Live Cameras" aria-label="Live Cameras"><Video /></div>
-        <div role="button" tabIndex={0} className={`sidebar-icon ${activeTab === 'people' ? 'active' : ''}`} onClick={() => handleTabChange('people')} onKeyDown={(e) => e.key === 'Enter' && handleTabChange('people')} title="Staff & Attendees" aria-label="Staff and Attendees"><Users /></div>
-        <div role="button" tabIndex={0} className={`sidebar-icon ${activeTab === 'analytics' ? 'active' : ''}`} onClick={() => handleTabChange('analytics')} onKeyDown={(e) => e.key === 'Enter' && handleTabChange('analytics')} title="Advanced Analytics" aria-label="Advanced Analytics"><Activity /></div>
+        <button className={`sidebar-icon ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => handleTabChange('dashboard')} title="Dashboard" aria-label="Dashboard"><LayoutDashboard /></button>
+        <button className={`sidebar-icon ${activeTab === 'map' ? 'active' : ''}`} onClick={() => handleTabChange('map')} title="Map Analytics" aria-label="Map Analytics"><MapIcon /></button>
+        <button className={`sidebar-icon ${activeTab === 'cameras' ? 'active' : ''}`} onClick={() => handleTabChange('cameras')} title="Live Cameras" aria-label="Live Cameras"><Video /></button>
+        <button className={`sidebar-icon ${activeTab === 'people' ? 'active' : ''}`} onClick={() => handleTabChange('people')} title="Staff & Attendees" aria-label="Staff and Attendees"><Users /></button>
+        <button className={`sidebar-icon ${activeTab === 'analytics' ? 'active' : ''}`} onClick={() => handleTabChange('analytics')} title="Advanced Analytics" aria-label="Advanced Analytics"><Activity /></button>
         <div style={{ flex: 1 }}></div>
-        <div role="button" tabIndex={0} className={`sidebar-icon ${activeTab === 'settings' ? 'active' : ''}`} onClick={() => handleTabChange('settings')} onKeyDown={(e) => e.key === 'Enter' && handleTabChange('settings')} title="Settings" aria-label="Settings"><Settings /></div>
+        <button className={`sidebar-icon ${activeTab === 'settings' ? 'active' : ''}`} onClick={() => handleTabChange('settings')} title="Settings" aria-label="Settings"><Settings /></button>
       </nav>
 
       {/* Main Content */}
