@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { LayoutDashboard, Users, AlertTriangle, Settings, Activity, Zap, Map as MapIcon, ChevronRight, Video } from 'lucide-react';
 import { collection, query, onSnapshot, orderBy, limit } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { logEvent } from 'firebase/analytics';
+import { db, analytics } from '../lib/firebase';
 import '../index.css';
 
 // --- Mock Data & Simulation Models ---
@@ -100,6 +101,16 @@ export default function Dashboard() {
 
   const [activeTab, setActiveTab] = useState('dashboard');
 
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    if (analytics) {
+      logEvent(analytics, 'select_content', {
+        content_type: 'tab',
+        item_id: tab
+      });
+    }
+  };
+
   const totalAttendees = Object.values(occupancy).reduce((a, b) => a + b, 0);
 
   const getHeatColor = (current: number, max: number) => {
@@ -148,18 +159,18 @@ export default function Dashboard() {
     <div className="app-container">
       
       {/* Sidebar */}
-      <div className="sidebar">
-        <div className={`sidebar-icon ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => setActiveTab('dashboard')} title="Dashboard"><LayoutDashboard /></div>
-        <div className={`sidebar-icon ${activeTab === 'map' ? 'active' : ''}`} onClick={() => setActiveTab('map')} title="Map Analytics"><MapIcon /></div>
-        <div className={`sidebar-icon ${activeTab === 'cameras' ? 'active' : ''}`} onClick={() => setActiveTab('cameras')} title="Live Cameras"><Video /></div>
-        <div className={`sidebar-icon ${activeTab === 'people' ? 'active' : ''}`} onClick={() => setActiveTab('people')} title="Staff & Attendees"><Users /></div>
-        <div className={`sidebar-icon ${activeTab === 'analytics' ? 'active' : ''}`} onClick={() => setActiveTab('analytics')} title="Advanced Analytics"><Activity /></div>
+      <nav className="sidebar" aria-label="Main Navigation">
+        <div role="button" tabIndex={0} className={`sidebar-icon ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => handleTabChange('dashboard')} onKeyDown={(e) => e.key === 'Enter' && handleTabChange('dashboard')} title="Dashboard" aria-label="Dashboard"><LayoutDashboard /></div>
+        <div role="button" tabIndex={0} className={`sidebar-icon ${activeTab === 'map' ? 'active' : ''}`} onClick={() => handleTabChange('map')} onKeyDown={(e) => e.key === 'Enter' && handleTabChange('map')} title="Map Analytics" aria-label="Map Analytics"><MapIcon /></div>
+        <div role="button" tabIndex={0} className={`sidebar-icon ${activeTab === 'cameras' ? 'active' : ''}`} onClick={() => handleTabChange('cameras')} onKeyDown={(e) => e.key === 'Enter' && handleTabChange('cameras')} title="Live Cameras" aria-label="Live Cameras"><Video /></div>
+        <div role="button" tabIndex={0} className={`sidebar-icon ${activeTab === 'people' ? 'active' : ''}`} onClick={() => handleTabChange('people')} onKeyDown={(e) => e.key === 'Enter' && handleTabChange('people')} title="Staff & Attendees" aria-label="Staff and Attendees"><Users /></div>
+        <div role="button" tabIndex={0} className={`sidebar-icon ${activeTab === 'analytics' ? 'active' : ''}`} onClick={() => handleTabChange('analytics')} onKeyDown={(e) => e.key === 'Enter' && handleTabChange('analytics')} title="Advanced Analytics" aria-label="Advanced Analytics"><Activity /></div>
         <div style={{ flex: 1 }}></div>
-        <div className={`sidebar-icon ${activeTab === 'settings' ? 'active' : ''}`} onClick={() => setActiveTab('settings')} title="Settings"><Settings /></div>
-      </div>
+        <div role="button" tabIndex={0} className={`sidebar-icon ${activeTab === 'settings' ? 'active' : ''}`} onClick={() => handleTabChange('settings')} onKeyDown={(e) => e.key === 'Enter' && handleTabChange('settings')} title="Settings" aria-label="Settings"><Settings /></div>
+      </nav>
 
       {/* Main Content */}
-      <div className="main-content">
+      <main className="main-content" role="main">
         
         {/* Header */}
         <header className="top-header">
@@ -540,7 +551,7 @@ export default function Dashboard() {
           </div>
         )}
 
-      </div>
+      </main>
     </div>
   );
 }

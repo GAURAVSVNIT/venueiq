@@ -1,0 +1,13 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /incidents/{incidentId} {
+      allow read: if true;
+      allow write: if request.resource.data.keys().hasAll(['type', 'title', 'msg', 'time'])
+                   && request.resource.data.type in ['critical', 'warning', 'info', 'danger'];
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
