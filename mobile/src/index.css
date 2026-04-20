@@ -74,6 +74,36 @@ h1, h2, h3, h4 {
   position: relative;
 }
 
+/* Safety Alert Banner */
+.safety-alert-banner {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  right: 1rem;
+  background: var(--danger);
+  color: white;
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  z-index: 100;
+  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4);
+}
+
+.alert-content strong {
+  display: block;
+  font-size: 0.875rem;
+  margin-bottom: 0.15rem;
+  color: white;
+}
+
+.alert-content p {
+  font-size: 0.75rem;
+  opacity: 0.95;
+  line-height: 1.3;
+}
+
 /* Top App Bar */
 .app-bar {
   padding: 1.5rem 1.5rem 1rem;

@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { MapPin, Coffee, ShoppingBag, Ticket, Navigation, Compass, Map, User, Search, ArrowRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { MapPin, Coffee, ShoppingBag, Ticket, Navigation, Compass, Map, User, Search, ArrowRight, AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { collection, query, onSnapshot, orderBy, limit, where } from 'firebase/firestore';
+import { db } from './lib/firebase';
 import './index.css';
 
 const MOCK_DATA = {
@@ -29,25 +31,54 @@ const MOCK_DATA = {
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [navigating, setNavigating] = useState(false);
-  const [distance, setDistance] = useState("120m");
+  const [navData, setNavData] = useState<{ path: string[], time: number } | null>(null);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [activeAlerts, setActiveAlerts] = useState<any[]>([]);
 
-  // Simulate movement if navigating
+  // 1. Listen for Critical Alerts
   useEffect(() => {
-    if (navigating) {
-      let currentDist = 120;
+    const q = query(
+      collection(db, "incidents"), 
+      where("type", "==", "critical"),
+      orderBy("time", "desc"), 
+      limit(1)
+    );
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setActiveAlerts(docs);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const startNavigation = async () => {
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      const res = await fetch(`${apiUrl}/navigation/route?start=Current&end=Seat`);
+      const data = await res.json();
+      setNavData({ path: data.path, time: data.estimated_time_seconds });
+      setNavigating(true);
+      setCurrentStep(0);
+    } catch (err) {
+      console.warn("Backend route service unavailable, using mock route.");
+      setNavData({ path: ["Exit Section", "Go to Gate 4"], time: 300 });
+      setNavigating(true);
+    }
+  };
+
+  // Simulate progress through the path
+  useEffect(() => {
+    if (navigating && navData) {
       const interval = setInterval(() => {
-        currentDist -= Math.floor(Math.random() * 5);
-        if (currentDist <= 0) {
-          setDistance("Arrived");
+        setCurrentStep(prev => {
+          if (prev < navData.path.length - 1) return prev + 1;
           clearInterval(interval);
-          setTimeout(() => setNavigating(false), 2000);
-        } else {
-          setDistance(currentDist + "m");
-        }
-      }, 2000);
+          setTimeout(() => setNavigating(false), 3000);
+          return prev;
+        });
+      }, 5000);
       return () => clearInterval(interval);
     }
-  }, [navigating]);
+  }, [navigating, navData]);
 
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -76,7 +107,7 @@ export default function App() {
             <h2 className="context-title">{MOCK_DATA.events.name}</h2>
             <p className="context-sub">Your Seat: {MOCK_DATA.events.seat}</p>
             
-            <button className="btn-primary" onClick={() => setNavigating(true)}>
+            <button className="btn-primary" onClick={startNavigation}>
               <Navigation size={18} /> Route to Seat
             </button>
           </motion.div>
@@ -90,8 +121,8 @@ export default function App() {
             style={{ background: 'linear-gradient(135deg, #059669, #10b981)' }}
           >
             <span className="context-label">Navigating to Seat</span>
-            <h2 className="context-title">{distance}</h2>
-            <p className="context-sub">Turn right at Concourse C.</p>
+            <h2 className="context-title">{navData?.path[currentStep]}</h2>
+            <p className="context-sub">Est. Arrival: {Math.ceil((navData?.time || 0) / 60)} mins</p>
             
             <button 
               className="btn-primary" 
@@ -265,6 +296,24 @@ export default function App() {
   return (
     <div className="mobile-app">
       
+      {/* Real-time Safety Banner */}
+      <AnimatePresence>
+        {activeAlerts.length > 0 && (
+          <motion.div 
+            initial={{ y: -100 }}
+            animate={{ y: 0 }}
+            exit={{ y: -100 }}
+            className="safety-alert-banner"
+          >
+            <AlertTriangle size={20} />
+            <div className="alert-content">
+              <strong>{activeAlerts[0].title}</strong>
+              <p>{activeAlerts[0].msg}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* App Bar (Don't show in Map View for full screen feel) */}
       {activeTab !== 'map' && (
         <div className="app-bar">

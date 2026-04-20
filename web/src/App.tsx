@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 
 import { LayoutDashboard, Users, AlertTriangle, Settings, Activity, Zap, Map as MapIcon, ChevronRight } from 'lucide-react';
+import { collection, query, onSnapshot, orderBy, limit } from 'firebase/firestore';
+import { db } from './lib/firebase';
 import './index.css';
 
 // --- Mock Data & Simulation Models ---
@@ -32,13 +34,27 @@ export default function App() {
   ]);
 
   const [aiStatus, setAiStatus] = useState<string[]>([]);
+  const [incidentLog, setIncidentLog] = useState(alerts);
 
   // Real-time API Integration
   useEffect(() => {
+    // 1. Firestore for Alerts (Persistent & Real-time)
+    const q = query(collection(db, "incidents"), orderBy("time", "desc"), limit(10));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const docs = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as any[];
+      setIncidentLog(docs);
+    }, (error) => {
+      console.warn("Firestore error (check if project is initialized):", error);
+    });
+
     const fetchData = async () => {
       try {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
         // Fetch AI Analytics
-        const res = await fetch('http://localhost:8000/analytics/wait-times');
+        const res = await fetch(`${apiUrl}/analytics/wait-times`);
         const data = await res.json();
         if (data && data.length > 0) {
           const mappedQueues = data.map((item: any, index: number) => ({
@@ -52,7 +68,7 @@ export default function App() {
         }
 
         // Fetch Health / Active Models
-        const healthRes = await fetch('http://localhost:8000/health');
+        const healthRes = await fetch(`${apiUrl}/health`);
         const healthData = await healthRes.json();
         setAiStatus(healthData.models_loaded || []);
 
@@ -69,14 +85,18 @@ export default function App() {
       setOccupancy(prev => {
         const next = { ...prev };
         Object.keys(next).forEach(zone => {
+          const maxCap = ZONES.find(z => z.id === zone)?.capacity || 5000;
           const variation = (Math.random() - 0.5) * 0.04;
-          next[zone] = Math.max(0, Math.floor(next[zone] * (1 + variation)));
+          next[zone] = Math.max(0, Math.min(maxCap, Math.floor(next[zone] * (1 + variation))));
         });
         return next;
       });
     }, 5000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      unsubscribe();
+    };
   }, []);
 
   const totalAttendees = Object.values(occupancy).reduce((a, b) => a + b, 0);
@@ -221,7 +241,7 @@ export default function App() {
                 <h2 className="panel-title"><AlertTriangle size={20}/> Incident Log</h2>
               </div>
               <div className="alerts-feed">
-                {alerts.map(a => (
+                {incidentLog.map(a => (
                   <div key={a.id} className={`alert-card ${a.type}`}>
                     <div className="alert-header">
                       <span>{a.title}</span>

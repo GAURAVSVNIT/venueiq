@@ -1,0 +1,11 @@
+node_modules/
+__pycache__/
+*.pyc
+.env
+.firebase/
+.firebaserc
+*.log
+venueiq-*-firebase-adminsdk-*.json
+*.pem
+*.key
+.DS_Store

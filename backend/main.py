@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 import torch
 from ultralytics import YOLO
@@ -7,10 +7,24 @@ import numpy as np
 from PIL import Image
 import io
 import time
+import asyncio
+import firebase_admin
+from firebase_admin import credentials, firestore
+import json
+from typing import List
 
 app = FastAPI(title="VenueIQ AI Backend")
 
-# Enable CORS for the dashboard
+# Initialize Firebase Admin (Default credentials work on Cloud Run)
+try:
+    firebase_admin.initialize_app()
+    db = firestore.client()
+    print("Firebase Admin initialized successfully.")
+except Exception as e:
+    print(f"Firebase Admin initialization failed: {e}")
+    db = None
+
+# Enable CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -18,32 +32,62 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Global model store (Lazy loading is better, but training/ready models for this task)
+# Global state
 MODELS = {}
+active_connections: List[WebSocket] = []
 
 @app.on_event("startup")
-async def load_models():
+async def startup_event():
     print("Loading models...")
-    # Load YOLOv8n (fastest variant) for person detection
     try:
         MODELS["yolo"] = YOLO("yolov8n.pt")
-        print("YOLOv8 loaded.")
-    except Exception as e:
-        print(f"Error loading YOLO: {e}")
-
-    # Load DETR for more complex scenes
-    try:
         MODELS["detr"] = pipeline("object-detection", model="facebook/detr-resnet-50")
-        print("DETR loaded.")
-    except Exception as e:
-        print(f"Error loading DETR: {e}")
-
-    # Tiny YOLOS for anomaly detection
-    try:
         MODELS["yolos_tiny"] = pipeline("object-detection", model="hustvl/yolos-tiny")
-        print("YOLOS-Tiny loaded.")
+        print("All models loaded successfully.")
     except Exception as e:
-        print(f"Error loading YOLOS-Tiny: {e}")
+        print(f"Error loading models: {e}")
+    
+    # Start the alert simulator
+    asyncio.create_task(simulate_incidents())
+
+async def simulate_incidents():
+    """Simulates real-time incidents, saves to Firestore, and broadcasts via WebSockets."""
+    INCIDENTS = [
+        {"title": "Crowd Bottleneck", "msg": "Gate 4 experiencing heavy flow.", "type": "warning"},
+        {"title": "Safety Alert", "msg": "Unattended bag detected in Section B.", "type": "critical"},
+        {"title": "Service Update", "msg": "Restroom maintenance in North Concourse.", "type": "info"}
+    ]
+    while True:
+        await asyncio.sleep(30) # Alert every 30 seconds
+        incident_data = np.random.choice(INCIDENTS)
+        incident_data["time"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+        
+        # 1. Save to Firestore
+        if db:
+            try:
+                db.collection("incidents").add(incident_data)
+                print(f"Incident saved to Firestore: {incident_data['title']}")
+            except Exception as e:
+                print(f"Error saving to Firestore: {e}")
+
+        # 2. Broadcast to WebSockets
+        if active_connections:
+            message = json.dumps(incident_data)
+            for connection in active_connections:
+                try:
+                    await connection.send_text(message)
+                except:
+                    pass
+
+@app.websocket("/ws/alerts")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    active_connections.append(websocket)
+    try:
+        while True:
+            await websocket.receive_text() # Keep connection alive
+    except WebSocketDisconnect:
+        active_connections.remove(websocket)
 
 @app.get("/health")
 def health():
@@ -53,88 +97,48 @@ def health():
 async def count_persons(file: UploadFile = File(...)):
     contents = await file.read()
     image = Image.open(io.BytesIO(contents))
-    
-    # Use YOLOv8 for fast detection
     if "yolo" in MODELS:
         results = MODELS["yolo"].predict(image, classes=[0], verbose=False)
         count = len(results[0].boxes)
-        return {
-            "count": count,
-            "engine": "YOLOv8",
-            "timestamp": time.time()
-        }
-    
-    return {"error": "Detection model not available"}
+        return {"count": count, "engine": "YOLOv8", "timestamp": time.time()}
+    return {"error": "Model not available"}
 
-@app.post("/analyze/crowd-density")
-async def crowd_density(file: UploadFile = File(...)):
-    # Simulation based on CSRNet MAE/Error rate as requested
-    # In a real scenario, we'd use the rootstrap-org/crowd-counting model
-    contents = await file.read()
-    image = Image.open(io.BytesIO(contents))
-    
-    # Mocking density map logic using DETR for person detection as a base
-    if "detr" in MODELS:
-        results = MODELS["detr"](image)
-        persons = [r for r in results if r['label'] == 'person']
-        count = len(persons)
-        
-        # Adding 'noise' based on CSRNet error rate (2-6%)
-        density_factor = 1.0 + (np.random.uniform(-0.06, 0.06))
-        estimated_crowd = int(count * density_factor)
-        
-        return {
-            "estimated_people": estimated_crowd,
-            "confidence": "high",
-            "model": "CSRNet (Simulated via DETR)",
-            "mae_ref": 10.6
-        }
-    
-    return {"error": "Density model not available"}
-
-@app.post("/analyze/safety")
-async def safety_check(file: UploadFile = File(...)):
-    contents = await file.read()
-    image = Image.open(io.BytesIO(contents))
-    
-    # Use YOLOS-Tiny for safety/anomaly
-    if "yolos_tiny" in MODELS:
-        results = MODELS["yolos_tiny"](image)
-        # Look for unusual objects or dense clusters
-        anomalies = []
-        for r in results:
-            if r['score'] > 0.8:
-                anomalies.append(r['label'])
-        
-        return {
-            "status": "safe" if len(anomalies) < 10 else "warning",
-            "detected_objects": list(set(anomalies)),
-            "engine": "YOLOS-Tiny"
-        }
-    
-    return {"error": "Safety model not available"}
+@app.get("/navigation/route")
+def get_route(start: str, end: str):
+    """Simple pathfinding logic (mocked grid)."""
+    # In a real app, this would use A* on a stadium coordinate graph
+    # Here we return a sequence of instructions
+    return {
+        "start": start,
+        "end": end,
+        "path": [
+            "Exit current section",
+            "Turn left at Concourse B",
+            "Proceed 50m past the Merch Store",
+            "Enter Gate 12"
+        ],
+        "estimated_time_seconds": 180,
+        "traffic_status": "clear"
+    }
 
 @app.get("/analytics/wait-times")
 def get_wait_times():
-    # Simulation for Queue & Time-Series Anomaly
-    # This would normally interface with the keras-io autoencoder
-    STANDS = ["Main merch Store", "South Concessions", "North Concessions", "West Beer"]
+    STANDS = ["Main Merch Store", "South Concessions", "North Concessions", "West Beer Garden"]
     data = []
     for stand in STANDS:
-        # Simulate wait time with random spikes (anomalies)
         base_time = np.random.randint(5, 15)
-        is_spike = np.random.random() > 0.9
-        current_time = base_time * (5 if is_spike else 1)
-        
+        is_spike = np.random.random() > 0.85
+        current_time = base_time * (4 if is_spike else 1)
         data.append({
             "stand": stand,
             "wait_time": current_time,
             "status": "anomaly" if is_spike else "normal",
-            "prediction": "stable" if not is_spike else "clearing in 10m"
+            "prediction": "stable" if not is_spike else "clearing soon"
         })
-    
     return data
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    import os
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
