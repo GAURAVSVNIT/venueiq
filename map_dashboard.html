@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VenueIQ - Stadium Intelligence</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Manrope:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "outline-variant": "#44484f",
+                      "on-primary-fixed-variant": "#005e64",
+                      "primary-fixed": "#00eefc",
+                      "primary": "#8ff5ff",
+                      "on-secondary-container": "#fff5f9",
+                      "on-secondary": "#41003d",
+                      "tertiary-fixed": "#9eabff",
+                      "on-primary": "#005d63",
+                      "primary-container": "#00eefc",
+                      "secondary-fixed-dim": "#ffa7ed",
+                      "surface-container-low": "#0f141a",
+                      "secondary-fixed": "#ffbdef",
+                      "secondary": "#ff56ef",
+                      "error-dim": "#d7383b",
+                      "tertiary-dim": "#4963ff",
+                      "surface-container-lowest": "#000000",
+                      "surface-container": "#151a21",
+                      "on-error": "#490006",
+                      "background": "#0a0e14",
+                      "on-tertiary-fixed-variant": "#0023ab",
+                      "on-tertiary-fixed": "#000c54",
+                      "outline": "#72757d",
+                      "error-container": "#9f0519",
+                      "secondary-dim": "#ff56ef",
+                      "inverse-on-surface": "#51555c",
+                      "secondary-container": "#ab00a2",
+                      "on-tertiary-container": "#ffffff",
+                      "surface": "#0a0e14",
+                      "primary-dim": "#00deec",
+                      "surface-container-high": "#1b2028",
+                      "on-primary-container": "#005359",
+                      "surface-variant": "#20262f",
+                      "on-secondary-fixed-variant": "#93008c",
+                      "on-surface": "#f1f3fc",
+                      "on-background": "#f1f3fc",
+                      "surface-container-highest": "#20262f",
+                      "surface-dim": "#0a0e14",
+                      "on-secondary-fixed": "#63005e",
+                      "tertiary-fixed-dim": "#8d9cff",
+                      "inverse-surface": "#f8f9ff",
+                      "surface-bright": "#262c36",
+                      "on-tertiary": "#001269",
+                      "tertiary-container": "#3956fb",
+                      "surface-tint": "#8ff5ff",
+                      "on-surface-variant": "#a8abb3",
+                      "on-error-container": "#ffa8a3",
+                      "on-primary-fixed": "#003f43",
+                      "error": "#ff716c",
+                      "primary-fixed-dim": "#00deec",
+                      "inverse-primary": "#006a71",
+                      "tertiary": "#8596ff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "fontFamily": {
+                      "headline": ["Space Grotesk"],
+                      "body": ["Manrope"],
+                      "label": ["Manrope"]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .font-headline { font-family: 'Space Grotesk', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .pulse-indicator {
+            box-shadow: 0 0 0 0 rgba(255, 86, 239, 0.7);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 86, 239, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255, 86, 239, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 86, 239, 0); }
+        }
+        .glass-panel {
+            background: rgba(32, 38, 47, 0.6);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background overflow-hidden">
+<!-- TopAppBar -->
+<header class="bg-[#0a0e14]/80 backdrop-blur-xl flex justify-between items-center w-full px-6 h-16 fixed top-0 z-50">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#00F0FF]" data-icon="analytics">analytics</span>
+<span class="text-xl font-bold text-[#8ff5ff] drop-shadow-[0_0_8px_rgba(0,240,255,0.4)] font-['Space_Grotesk'] tracking-widest uppercase">STADIUM INTELLIGENCE</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex gap-6 mr-6">
+<span class="text-[#00F0FF] font-['Space_Grotesk'] tracking-widest uppercase text-sm cursor-pointer">Live Heatmap</span>
+<span class="text-slate-400 font-['Space_Grotesk'] tracking-widest uppercase text-sm cursor-pointer hover:text-[#8ff5ff] transition-colors">Zone Analytics</span>
+<span class="text-slate-400 font-['Space_Grotesk'] tracking-widest uppercase text-sm cursor-pointer hover:text-[#8ff5ff] transition-colors">Incident Control</span>
+</div>
+<div class="w-10 h-10 rounded-full border border-primary/20 overflow-hidden cursor-pointer active:scale-95">
+<img alt="Admin" data-alt="minimalist 3d avatar of a technical operator with glowing blue glasses in a dark futuristic setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRbCdFGqj6A6-x3x8XqZlFppu53DeMeXN52E2ozaOJauIKanKGCcvQDnaEw7LHbIEaxpZiziZZPMS3J_RsgRN5omqZBuQ8amu3oiYm5s8ndIbHhH-4mx5UYEaG98h5M7X1BcXMIDsW5wTdePWNqbX4TcnU8pP_t2-6qWiwK1MJSAc5ggi8-L0qpyfSjGEBspvHbrIs18ER0rjtQYmcq6QTpCKg5sfwxDxn8-LBq17o1Gc8DH8bppq11N5Cb9NAWU8jyS0UyiQ21ObM"/>
+</div>
+</div>
+</header>
+<!-- NavigationDrawer (Sidebar) -->
+<aside class="fixed left-0 top-0 h-full z-[60] bg-[#0a0e14] h-full w-72 hidden md:block shadow-[4px_0_24px_rgba(0,240,255,0.05)] pt-20">
+<div class="px-6 mb-8 flex items-center gap-4">
+<div class="w-12 h-12 bg-surface-container-high rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="terminal">terminal</span>
+</div>
+<div>
+<p class="text-[#00F0FF] font-['Space_Grotesk'] font-bold text-sm tracking-widest">COMMAND CENTER</p>
+<p class="text-slate-500 text-xs uppercase">STADIUM ALPHA-1</p>
+</div>
+</div>
+<nav class="space-y-1">
+<div class="bg-gradient-to-r from-[#00F0FF]/20 to-transparent border-l-2 border-[#00F0FF] text-[#8ff5ff] px-6 py-4 flex items-center gap-4 transition-all duration-300 ease-in-out cursor-pointer">
+<span class="material-symbols-outlined" data-icon="map">map</span>
+<span class="font-['Manrope'] font-medium">Live Heatmap</span>
+</div>
+<div class="text-slate-500 hover:bg-[#161b22] hover:text-[#f1f3fc] px-6 py-4 flex items-center gap-4 transition-all duration-300 ease-in-out cursor-pointer">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+<span class="font-['Manrope'] font-medium">Zone Analytics</span>
+</div>
+<div class="text-slate-500 hover:bg-[#161b22] hover:text-[#f1f3fc] px-6 py-4 flex items-center gap-4 transition-all duration-300 ease-in-out cursor-pointer">
+<span class="material-symbols-outlined" data-icon="sensor_occupied">sensor_occupied</span>
+<span class="font-['Manrope'] font-medium">Gate Flow</span>
+</div>
+<div class="text-slate-500 hover:bg-[#161b22] hover:text-[#f1f3fc] px-6 py-4 flex items-center gap-4 transition-all duration-300 ease-in-out cursor-pointer">
+<span class="material-symbols-outlined" data-icon="security">security</span>
+<span class="font-['Manrope'] font-medium">Incident Control</span>
+</div>
+<div class="text-slate-500 hover:bg-[#161b22] hover:text-[#f1f3fc] px-6 py-4 flex items-center gap-4 transition-all duration-300 ease-in-out cursor-pointer">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+<span class="font-['Manrope'] font-medium">System Logs</span>
+</div>
+</nav>
+</aside>
+<!-- Main Canvas -->
+<main class="md:pl-72 pt-16 h-screen w-full relative flex flex-col md:flex-row">
+<!-- Map Section -->
+<div class="flex-1 relative overflow-hidden bg-surface-container-lowest">
+<!-- Simulated Map Image -->
+<div class="absolute inset-0 w-full h-full">
+<img alt="Map" class="w-full h-full object-cover opacity-40 grayscale contrast-125" data-alt="Top-down high-contrast architectural rendering of a stadium with glowing blue and pink neon heatmap overlays showing crowd density" data-location="London" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAaDr-HTV4Nm5VPGlSK8s2Nvw-y54EU-mmQrgCRrvG0aZeWt2Mqe2wn8mJLmKLnvF8BOWDsNUCpDr9AQRUzOWwUnZhxyfMicV56VmrUOHKT3UK06T6CAMyULIoZpqrM0wt5Aes5wDMgRF1NFdr3Wpnlvx9AAH2Z5IBgXLX3ecaVbbDQQtUmlkmgngmj0HDwctGt2QjSkLAmOqeEC-_0cr2hR3vsb-F7jXMRhj67qGY_9yMmjY5uoqRBkbom-dM-VVhEhYi_W1-xkI8T"/>
+<!-- Heatmap Overlay Effect -->
+<div class="absolute inset-0 bg-gradient-to-tr from-secondary/10 via-transparent to-primary/10 mix-blend-screen pointer-events-none"></div>
+<div class="absolute top-1/4 left-1/3 w-64 h-64 bg-secondary/20 blur-[80px] rounded-full"></div>
+<div class="absolute bottom-1/3 right-1/4 w-96 h-96 bg-primary/10 blur-[100px] rounded-full"></div>
+</div>
+<!-- Intel Layers Toggle (HUD Component) -->
+<div class="absolute top-6 left-6 z-10 glass-panel p-1 rounded-xl border border-outline-variant/20 flex gap-1">
+<button class="px-4 py-2 bg-primary-container/20 text-primary rounded-lg font-['Space_Grotesk'] text-xs tracking-widest flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="layers">layers</span> HEATMAP
+                </button>
+<button class="px-4 py-2 text-slate-400 hover:text-on-surface rounded-lg font-['Space_Grotesk'] text-xs tracking-widest flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="security">security</span> SECURITY
+                </button>
+<button class="px-4 py-2 text-slate-400 hover:text-on-surface rounded-lg font-['Space_Grotesk'] text-xs tracking-widest flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="input">input</span> GATE FLOW
+                </button>
+</div>
+<!-- Floating Metrics -->
+<div class="absolute bottom-10 left-6 z-10">
+<div class="glass-panel p-6 rounded-xl border border-outline-variant/20">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-2 h-2 rounded-full bg-secondary pulse-indicator"></div>
+<span class="text-xs font-['Space_Grotesk'] tracking-[0.2em] text-secondary">LIVE FEED ACTIVE</span>
+</div>
+<h2 class="text-4xl font-headline font-bold text-on-surface tracking-tighter">72,400</h2>
+<p class="text-on-surface-variant text-xs uppercase tracking-widest">Total Attendance</p>
+</div>
+</div>
+</div>
+<!-- Sidebar Panel / Data Cards -->
+<div class="w-full md:w-[400px] bg-surface-container-low p-6 overflow-y-auto custom-scrollbar flex flex-col gap-6 z-20">
+<h3 class="font-headline text-lg font-bold text-primary tracking-widest uppercase flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="monitoring">monitoring</span> Zone Intel
+            </h3>
+<!-- Zone Card: North Stand -->
+<div class="bg-surface-container-high rounded-xl p-5 border-l-4 border-primary">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h4 class="font-headline font-bold text-on-surface text-base uppercase">North Stand</h4>
+<p class="text-xs text-on-surface-variant">Gate Access: Alpha, Beta</p>
+</div>
+<span class="text-primary font-headline text-xl font-bold">88%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden mb-3">
+<div class="h-full bg-primary shadow-[0_0_12px_#8ff5ff]" style="width: 88%"></div>
+</div>
+<div class="flex justify-between text-[10px] font-['Space_Grotesk'] uppercase tracking-widest text-slate-400">
+<span>Occupancy: 17,600</span>
+<span>Cap: 20,000</span>
+</div>
+</div>
+<!-- Zone Card: South Stand -->
+<div class="bg-surface-container-high rounded-xl p-5 border-l-4 border-secondary">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h4 class="font-headline font-bold text-on-surface text-base uppercase">South Stand</h4>
+<p class="text-xs text-on-surface-variant">Gate Access: Gamma, Delta</p>
+</div>
+<span class="text-secondary font-headline text-xl font-bold">96%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden mb-3">
+<div class="h-full bg-secondary shadow-[0_0_12px_#ff56ef]" style="width: 96%"></div>
+</div>
+<div class="flex justify-between text-[10px] font-['Space_Grotesk'] uppercase tracking-widest text-slate-400">
+<span>Occupancy: 19,200</span>
+<span>Cap: 20,000</span>
+</div>
+</div>
+<!-- Zone Card: East/West -->
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-high rounded-xl p-4">
+<h4 class="font-headline font-bold text-on-surface text-xs uppercase mb-2">East Wing</h4>
+<p class="text-2xl font-headline font-bold text-on-surface mb-1">64%</p>
+<div class="w-full bg-surface-container-highest h-1 rounded-full overflow-hidden">
+<div class="h-full bg-primary/60" style="width: 64%"></div>
+</div>
+</div>
+<div class="bg-surface-container-high rounded-xl p-4">
+<h4 class="font-headline font-bold text-on-surface text-xs uppercase mb-2">West Wing</h4>
+<p class="text-2xl font-headline font-bold text-on-surface mb-1">72%</p>
+<div class="w-full bg-surface-container-highest h-1 rounded-full overflow-hidden">
+<div class="h-full bg-primary/60" style="width: 72%"></div>
+</div>
+</div>
+</div>
+<!-- Activity Log (Glassmorphic Table Alternative) -->
+<div class="mt-4">
+<p class="font-headline text-[10px] tracking-[0.3em] text-on-surface-variant uppercase mb-4">System Event Log</p>
+<div class="space-y-3">
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-highest/40 hover:bg-surface-container-highest transition-colors cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="warning">warning</span>
+<span class="text-xs font-medium text-on-surface">Gate G-4 Congestion</span>
+</div>
+<span class="text-[9px] text-slate-500 font-mono">14:22:04</span>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-highest/40 hover:bg-surface-container-highest transition-colors cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="check_circle">check_circle</span>
+<span class="text-xs font-medium text-on-surface">Main Entrance Flow OK</span>
+</div>
+<span class="text-[9px] text-slate-500 font-mono">14:19:55</span>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-highest/40 hover:bg-surface-container-highest transition-colors cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary text-sm" data-icon="info">info</span>
+<span class="text-xs font-medium text-on-surface">Field Access Secured</span>
+</div>
+<span class="text-[9px] text-slate-500 font-mono">14:15:21</span>
+</div>
+</div>
+</div>
+<!-- CTA Section -->
+<button class="mt-auto w-full py-4 bg-gradient-to-r from-primary to-primary-container rounded-lg text-on-primary font-headline font-bold tracking-widest text-sm uppercase flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined" data-icon="bolt">bolt</span> Deploy Response Team
+            </button>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full h-16 bg-[#0a0e14]/90 backdrop-blur-lg flex justify-around items-center z-50 px-4 border-t border-[#00F0FF]/10">
+<div class="flex flex-col items-center justify-center text-[#00F0FF] relative after:content-[''] after:absolute after:bottom-0 after:w-8 after:h-1 after:bg-[#00F0FF] after:shadow-[0_0_10px_#00F0FF] active:scale-90 transition-transform cursor-pointer">
+<span class="material-symbols-outlined" data-icon="explore">explore</span>
+<span class="font-['Space_Grotesk'] text-[10px] uppercase tracking-tighter">MAP</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-500 active:scale-90 transition-transform cursor-pointer hover:text-[#8ff5ff]">
+<span class="material-symbols-outlined" data-icon="view_quilt">view_quilt</span>
+<span class="font-['Space_Grotesk'] text-[10px] uppercase tracking-tighter">ZONES</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-500 active:scale-90 transition-transform cursor-pointer hover:text-[#8ff5ff]">
+<span class="material-symbols-outlined" data-icon="notifications_active">notifications_active</span>
+<span class="font-['Space_Grotesk'] text-[10px] uppercase tracking-tighter">ALERTS</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-500 active:scale-90 transition-transform cursor-pointer hover:text-[#8ff5ff]">
+<span class="material-symbols-outlined" data-icon="monitoring">monitoring</span>
+<span class="font-['Space_Grotesk'] text-[10px] uppercase tracking-tighter">INTEL</span>
+</div>
+</nav>
+</body></html>

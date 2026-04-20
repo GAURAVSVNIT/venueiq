@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VenueIQ | Kinetic Intelligence</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed": "#9eabff",
+                    "on-surface": "#f1f3fc",
+                    "secondary-dim": "#ff56ef",
+                    "on-primary-fixed-variant": "#005e64",
+                    "primary-fixed": "#00eefc",
+                    "surface-container-high": "#1b2028",
+                    "tertiary": "#8596ff",
+                    "on-tertiary": "#001269",
+                    "error": "#ff716c",
+                    "on-background": "#f1f3fc",
+                    "on-surface-variant": "#a8abb3",
+                    "on-secondary-fixed-variant": "#93008c",
+                    "inverse-on-surface": "#51555c",
+                    "tertiary-fixed-dim": "#8d9cff",
+                    "secondary-fixed-dim": "#ffa7ed",
+                    "primary-fixed-dim": "#00deec",
+                    "surface-container-lowest": "#000000",
+                    "error-container": "#9f0519",
+                    "surface-dim": "#0a0e14",
+                    "on-error": "#490006",
+                    "outline": "#72757d",
+                    "background": "#0a0e14",
+                    "error-dim": "#d7383b",
+                    "surface": "#0a0e14",
+                    "surface-variant": "#20262f",
+                    "on-secondary": "#41003d",
+                    "tertiary-container": "#3956fb",
+                    "surface-tint": "#8ff5ff",
+                    "secondary-container": "#ab00a2",
+                    "on-primary-container": "#005359",
+                    "on-primary": "#005d63",
+                    "surface-container-highest": "#20262f",
+                    "on-tertiary-fixed-variant": "#0023ab",
+                    "on-secondary-fixed": "#63005e",
+                    "surface-container": "#151a21",
+                    "outline-variant": "#44484f",
+                    "on-tertiary-container": "#ffffff",
+                    "inverse-primary": "#006a71",
+                    "on-primary-fixed": "#003f43",
+                    "secondary": "#ff56ef",
+                    "primary": "#8ff5ff",
+                    "primary-container": "#00eefc",
+                    "on-secondary-container": "#fff5f9",
+                    "secondary-fixed": "#ffbdef",
+                    "tertiary-dim": "#4963ff",
+                    "inverse-surface": "#f8f9ff",
+                    "surface-bright": "#262c36",
+                    "on-error-container": "#ffa8a3",
+                    "on-tertiary-fixed": "#000c54",
+                    "primary-dim": "#00deec",
+                    "surface-container-low": "#0f141a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Space Grotesk"],
+                    "body": ["Manrope"],
+                    "label": ["Manrope"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glow-border {
+            box-shadow: inset 0 0 0 1px rgba(143, 245, 255, 0.1);
+        }
+        .kinetic-pulse {
+            position: relative;
+        }
+        .kinetic-pulse::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid #ff56ef;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+        .grid-bg {
+            background-image: 
+                linear-gradient(to right, rgba(143, 245, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(143, 245, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-[#0a0e14]/70 backdrop-blur-md shadow-[0_8px_32px_rgba(0,240,255,0.08)]">
+<nav class="flex justify-between items-center w-full px-8 py-4 mx-auto max-w-7xl">
+<div class="text-2xl font-bold tracking-tighter text-[#00F0FF] font-['Space_Grotesk']">VenueIQ</div>
+<div class="hidden md:flex items-center gap-10">
+<a class="text-[#00F0FF] border-b-2 border-[#00F0FF] pb-1 font-['Manrope']" href="#">Solutions</a>
+<a class="text-slate-400 font-medium font-['Manrope'] hover:text-[#8ff5ff] transition-all duration-300" href="#">Insights</a>
+<a class="text-slate-400 font-medium font-['Manrope'] hover:text-[#8ff5ff] transition-all duration-300" href="#">Security</a>
+<a class="text-slate-400 font-medium font-['Manrope'] hover:text-[#8ff5ff] transition-all duration-300" href="#">Operations</a>
+</div>
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary-container px-6 py-2.5 rounded-md font-bold tracking-tight scale-95 active:scale-90 transition-transform shadow-[0_0_20px_rgba(0,240,255,0.3)]">
+                Launch Dashboard
+            </button>
+</nav>
+</header>
+<main class="relative pt-20">
+<!-- Background Accents -->
+<div class="fixed inset-0 pointer-events-none z-0">
+<div class="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px]"></div>
+<div class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-secondary/5 rounded-full blur-[100px]"></div>
+<div class="absolute inset-0 grid-bg opacity-20"></div>
+</div>
+<!-- Hero Section -->
+<section class="relative z-10 max-w-7xl mx-auto px-8 py-24 md:py-40 flex flex-col items-center text-center">
+<div class="inline-flex items-center gap-2 px-3 py-1 mb-8 rounded-full bg-surface-container-high border border-outline-variant/20">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span>
+</span>
+<span class="text-[10px] font-label font-bold uppercase tracking-[0.15em] text-on-surface-variant">Live System Active</span>
+</div>
+<h1 class="font-headline font-bold text-5xl md:text-8xl tracking-tighter text-on-surface max-w-4xl leading-[0.9]">
+                The Future of <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-container">Stadium Intelligence</span>
+</h1>
+<p class="mt-8 text-on-surface-variant text-lg md:text-xl max-w-2xl font-light leading-relaxed">
+                Unlock high-capacity performance with real-time crowd orchestration, predictive analytics, and kinetic safety protocols designed for the world's most advanced venues.
+            </p>
+<div class="mt-12 flex flex-col sm:flex-row gap-6">
+<button class="px-10 py-5 bg-gradient-to-br from-primary to-primary-container text-on-primary font-extrabold text-lg rounded-md shadow-[0_0_40px_rgba(143,245,255,0.2)] hover:shadow-[0_0_60px_rgba(143,245,255,0.35)] transition-all">
+                    Launch Dashboard
+                </button>
+<button class="px-10 py-5 bg-surface-container-high text-primary font-bold text-lg rounded-md outline outline-1 outline-primary/20 hover:bg-surface-container-highest transition-colors">
+                    Explore Solutions
+                </button>
+</div>
+<!-- Hero Image / Visual Asset -->
+<div class="mt-20 w-full rounded-xl overflow-hidden bg-surface-container-low p-2 border border-outline-variant/10 shadow-2xl relative group">
+<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-10"></div>
+<img class="w-full h-[500px] object-cover rounded-lg opacity-80 group-hover:opacity-100 transition-opacity duration-700" data-alt="wide angle cinematic view of a futuristic glowing sports stadium interior at night with neon lights and digital data overlays" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMwAOfO0TrxcoPjM7CEYWFavqylhFwfRX0K8WQ-teenQ8hRDfZy-CP-TFKS31U9AarX6VXtiUR6eMe4iPQJJqQ334K4HJkMZGetT7EiIWZLcdqaJrfpN5TTpjfNcie7wXhJcrmPyCgm8o2X6E7KUPI2ee3sIxj20eggCl1m2pbSgb2qJ_WHaSRlO7pVO3orGKm8h4w2l_vJgLRFvAvxCXFUvE8Sqih3UuySQyzlNdj8mu6JZ4yue6AmyWW-LmI12mbXz81CtYXp2Iz"/>
+<!-- HUD Data Overlays -->
+<div class="absolute top-10 left-10 z-20 hidden md:block">
+<div class="bg-background/60 backdrop-blur-xl p-4 rounded-lg border border-primary/20">
+<div class="text-[10px] text-primary font-bold tracking-widest uppercase mb-1">Live Attendance</div>
+<div class="text-3xl font-headline font-bold text-on-surface tracking-tighter">72,408</div>
+<div class="w-full h-1 bg-surface-container-highest mt-2 rounded-full overflow-hidden">
+<div class="w-[92%] h-full bg-primary shadow-[0_0_8px_rgba(143,245,255,1)]"></div>
+</div>
+</div>
+</div>
+<div class="absolute bottom-10 right-10 z-20 hidden md:block">
+<div class="bg-background/60 backdrop-blur-xl p-4 rounded-lg border border-secondary/20">
+<div class="text-[10px] text-secondary font-bold tracking-widest uppercase mb-1">System Health</div>
+<div class="flex items-end gap-2">
+<div class="text-3xl font-headline font-bold text-on-surface tracking-tighter">99.9%</div>
+<span class="material-symbols-outlined text-secondary text-sm mb-1">analytics</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Features Section -->
+<section class="relative z-10 max-w-7xl mx-auto px-8 py-24">
+<div class="mb-16">
+<h2 class="font-headline text-4xl font-bold tracking-tight text-on-surface">Engineered for Velocity</h2>
+<div class="h-1 w-20 bg-primary mt-4"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Card 1 -->
+<div class="group relative p-8 rounded-xl bg-surface-container-low backdrop-blur-lg border border-outline-variant/10 hover:border-primary/40 transition-all duration-500 overflow-hidden">
+<div class="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-colors"></div>
+<div class="w-14 h-14 rounded-lg bg-surface-container-high flex items-center justify-center mb-8 border border-primary/20 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="vision" style="font-variation-settings: 'FILL' 1;">visibility</span>
+</div>
+<h3 class="text-xl font-headline font-bold text-on-surface mb-4">AI Crowd Monitoring</h3>
+<p class="text-on-surface-variant leading-relaxed">
+                        Computer vision algorithms process live feeds to identify congestion zones and optimize throughput in real-time across all concourse levels.
+                    </p>
+<div class="mt-8 flex items-center gap-2 text-primary font-bold text-sm tracking-tight cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity">
+                        VIEW ANALYTICS <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="group relative p-8 rounded-xl bg-surface-container-low backdrop-blur-lg border border-outline-variant/10 hover:border-primary/40 transition-all duration-500 overflow-hidden">
+<div class="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-colors"></div>
+<div class="w-14 h-14 rounded-lg bg-surface-container-high flex items-center justify-center mb-8 border border-primary/20 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="forecast" style="font-variation-settings: 'FILL' 1;">schedule</span>
+</div>
+<h3 class="text-xl font-headline font-bold text-on-surface mb-4">Predictive Wait Times</h3>
+<p class="text-on-surface-variant leading-relaxed">
+                        Forecast queue lengths for entry gates and concessions using historical data and current flow rates to redistribute crowds effectively.
+                    </p>
+<div class="mt-8 flex items-center gap-2 text-primary font-bold text-sm tracking-tight cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity">
+                        CONFIGURE MODELS <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="group relative p-8 rounded-xl bg-surface-container-low backdrop-blur-lg border border-outline-variant/10 hover:border-secondary/40 transition-all duration-500 overflow-hidden">
+<div class="absolute -top-24 -right-24 w-48 h-48 bg-secondary/10 rounded-full blur-3xl group-hover:bg-secondary/20 transition-colors"></div>
+<div class="w-14 h-14 rounded-lg bg-surface-container-high flex items-center justify-center mb-8 border border-secondary/20 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-secondary text-3xl" data-icon="shield" style="font-variation-settings: 'FILL' 1;">gpp_maybe</span>
+</div>
+<h3 class="text-xl font-headline font-bold text-on-surface mb-4">Real-time Safety Alerts</h3>
+<p class="text-on-surface-variant leading-relaxed">
+                        Instant notification system for security personnel. Automated response protocols for medical emergencies or localized security incidents.
+                    </p>
+<div class="mt-8 flex items-center gap-2 text-secondary font-bold text-sm tracking-tight cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity">
+                        ALERTS CENTER <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Stats Bento Grid -->
+<section class="relative z-10 max-w-7xl mx-auto px-8 py-24">
+<div class="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-4 h-auto md:h-[600px]">
+<div class="md:col-span-2 md:row-span-2 bg-surface-container p-10 rounded-2xl flex flex-col justify-between border border-outline-variant/10 relative overflow-hidden">
+<div class="relative z-10">
+<div class="text-[12px] font-label font-bold uppercase tracking-[0.2em] text-primary mb-2">Primary Metric</div>
+<h4 class="font-headline font-bold text-4xl text-on-surface">Data-Driven Capacity Management</h4>
+</div>
+<div class="relative z-10 flex items-baseline gap-2">
+<span class="text-7xl font-headline font-bold text-on-surface">24%</span>
+<span class="text-primary text-xl font-bold font-headline leading-none">INCREASE</span>
+</div>
+<div class="absolute -bottom-10 -right-10 opacity-10">
+<span class="material-symbols-outlined text-[300px]" style="font-variation-settings: 'wght' 700;">hub</span>
+</div>
+</div>
+<div class="bg-surface-container-high p-8 rounded-2xl border border-outline-variant/10">
+<div class="text-[10px] font-label font-bold uppercase tracking-[0.2em] text-on-surface-variant mb-4">Active Nodes</div>
+<div class="text-4xl font-headline font-bold text-on-surface">1,402</div>
+<p class="mt-2 text-xs text-on-surface-variant font-medium">IoT SENSORS DEPLOYED</p>
+</div>
+<div class="bg-surface-container-high p-8 rounded-2xl border border-outline-variant/10">
+<div class="text-[10px] font-label font-bold uppercase tracking-[0.2em] text-on-surface-variant mb-4">Latency</div>
+<div class="text-4xl font-headline font-bold text-on-surface">14ms</div>
+<p class="mt-2 text-xs text-on-surface-variant font-medium">EDGE COMPUTING SPEED</p>
+</div>
+<div class="md:col-span-2 bg-gradient-to-br from-surface-container-high to-surface-container p-8 rounded-2xl border border-outline-variant/10 flex items-center justify-between">
+<div>
+<div class="text-[10px] font-label font-bold uppercase tracking-[0.2em] text-secondary mb-2">Safety Rating</div>
+<div class="text-4xl font-headline font-bold text-on-surface">Tier 1 Elite</div>
+</div>
+<div class="w-16 h-16 rounded-full border-4 border-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">verified</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full border-t border-white/5 bg-[#0a0e14]">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-12 py-10 gap-6 max-w-7xl mx-auto">
+<div class="flex flex-col gap-2">
+<div class="text-lg font-bold text-[#00F0FF] font-['Space_Grotesk']">VenueIQ</div>
+<p class="font-['Manrope'] text-xs tracking-widest uppercase text-slate-500">© 2024 VenueIQ Kinetic Intelligence. All rights reserved.</p>
+</div>
+<div class="flex gap-8">
+<a class="font-['Manrope'] text-xs tracking-widest uppercase text-slate-500 hover:text-[#00F0FF] transition-colors" href="#">Privacy Policy</a>
+<a class="font-['Manrope'] text-xs tracking-widest uppercase text-slate-500 hover:text-[#00F0FF] transition-colors" href="#">Terms of Service</a>
+<a class="font-['Manrope'] text-xs tracking-widest uppercase text-slate-500 hover:text-[#00F0FF] transition-colors" href="#">Stadium API</a>
+<a class="font-['Manrope'] text-xs tracking-widest uppercase text-slate-500 hover:text-[#00F0FF] transition-colors" href="#">Contact Support</a>
+</div>
+</div>
+</footer>
+</body></html>

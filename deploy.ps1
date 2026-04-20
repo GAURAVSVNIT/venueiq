@@ -38,9 +38,9 @@ firebase target:apply hosting mobile venueiq-mobile --project $PROJECT_ID
 
 # Build and Deploy
 cd web
-npm install; npm run build
+pnpm install; pnpm run build
 cd ../mobile
-npm install; npm run build
+pnpm install; pnpm run build
 cd ..
 
 firebase deploy --only hosting --project $PROJECT_ID
